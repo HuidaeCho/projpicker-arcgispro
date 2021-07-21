@@ -6,7 +6,7 @@
 setlocal
 
 :: Constants
-set PYTURL=https://raw.githubusercontent.com/HuidaeCho/projpicker/main/guis/arcgispro/projpicker.pyt
+set PYTURL=https://github.com/HuidaeCho/projpicker-arcgispro/archive/main.zip
 set GITURL=https://github.com/HuidaeCho/projpicker/archive/main.zip
 
 
@@ -32,7 +32,10 @@ echo Installing projpicker.pyt at !folder!
 :: pyt file
 echo Retrieving toolbox from:
 echo - !PYTURL!
-curl.exe -s --output projpicker.pyt --url !PYTURL!
+curl.exe -s -OL !PYTURL!
+
+:: Extract root
+tar -xf main.zip
 
 :: Latest git
 echo Retrieving module from:
@@ -45,7 +48,12 @@ tar -xf main.zip
 :: Move module to main folder
 move projpicker-main\projpicker projpicker >nul
 :: Move bootstrap pyproj into projpicker root
-move projpicker-main\guis\arcgispro\pyproj projpicker\pyproj >nul
+move projpicker-arcgispro-main\projpicker-arcgispro\pyproj projpicker\pyproj >nul
+:: Move projpicker toolbox file into main
+move projpicker-arcgispro-main\projpicker-arcgispro\projpicker.pyt projpicker >nul
+
+
+
 
 :: clean up
 Rmdir /Q /S "projpicker-main"
