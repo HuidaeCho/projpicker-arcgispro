@@ -67,19 +67,8 @@ def check_unit(unit):
 
 def run_gui(crs):
     # Run GUI and return the selected CRS
-    sel_crs = ppik.gui.select_bbox(crs, True,
-                                   lambda b: textwrap.dedent(f"""\
-        CRS Type: {b.proj_table.replace("_crs", "").capitalize()}
-        CRS Code: {b.crs_auth_name}:{b.crs_code}
-        Unit:     {b.unit}
-        South:    {b.south_lat}°
-        North:    {b.north_lat}°
-        West:     {b.west_lon}°
-        East:     {b.east_lon}°
-        Area:     {b.area_sqkm:n} sqkm"""))
-
-    sel_crs = sel_crs[0] if len(sel_crs) > 0 else None
-    return sel_crs
+    bbox, _, _ = ppik.gui.start(bbox=crs)
+    return bbox
 
 
 ################################################################################
@@ -189,9 +178,9 @@ class CreateFeatureClass(object):
         # Create spatial reference object
         # MUST be integer so IGNF authority codes will not work
         try:
-            spat_ref = arcpy.SpatialReference(int(sel_crs.crs_code))
+            spat_ref = arcpy.SpatialReference(int(sel_crs[0][3]))
         except RuntimeError:
-            arcpy.AddError(f"Selected projection {sel_crs} is not avaible in ArcGIS Pro")
+            arcpy.AddError(f"Selected projection {sel_crs[0][3]} is not avaible in ArcGIS Pro")
         # Create output geometry
         arcpy.management.CreateFeatureclass(out_dir, out_file,
                 spatial_reference=spat_ref)
@@ -295,9 +284,9 @@ class GuessFeatureClassProjection(object):
         # Create spatial reference object
         # MUST be integer so IGNF authority codes will not work
         try:
-            spat_ref = arcpy.SpatialReference(int(sel_crs.crs_code))
+            spat_ref = arcpy.SpatialReference(int(sel_crs[0][3]))
         except RuntimeError:
-            arcpy.AddError(f"Selected projection {sel_crs} is not avaible in ArcGIS Pro")
+            arcpy.AddError(f"Selected projection {sel_crs[0][3]} is not avaible in ArcGIS Pro")
         # Create output geometry
         arcpy.DefineProjection_management(os.path.join(feature_dir, feature_name), spat_ref)
 
@@ -398,9 +387,9 @@ class GuessRasterProjection(object):
         # Create spatial reference object
         # MUST be integer so IGNF authority codes will not work
         try:
-            spat_ref = arcpy.SpatialReference(int(sel_crs.crs_code))
+            spat_ref = arcpy.SpatialReference(int(sel_crs[0][3]))
         except RuntimeError:
-            arcpy.AddError(f"Selected projection {sel_crs} is not avaible in ArcGIS Pro")
+            arcpy.AddError(f"Selected projection {sel_crs[0][3]} is not avaible in ArcGIS Pro")
         arcpy.DefineProjection_management(os.path.join(raster_dir, raster_name), spat_ref)
 
         return
@@ -502,9 +491,9 @@ class ReprojectFeatureClass(object):
         # Create spatial reference object
         # MUST be integer so IGNF authority codes will not work
         try:
-            spat_ref = arcpy.SpatialReference(int(sel_crs.crs_code))
+            spat_ref = arcpy.SpatialReference(int(sel_crs[0][3]))
         except RuntimeError:
-            arcpy.AddError(f"Selected projection {sel_crs} is not avaible in ArcGIS Pro")
+            arcpy.AddError(f"Selected projection {sel_crs[0][3]} is not avaible in ArcGIS Pro")
         # Create output geometry
         arcpy.management.Project(in_file, out_file, spat_ref)
 
@@ -605,9 +594,9 @@ class ReprojectRaster(object):
         # Create spatial reference object
         # MUST be integer so IGNF authority codes will not work
         try:
-            spat_ref = arcpy.SpatialReference(int(sel_crs.crs_code))
+            spat_ref = arcpy.SpatialReference(int(sel_crs[0][3]))
         except RuntimeError:
-            arcpy.AddError(f"Selected projection {sel_crs} is not avaible in ArcGIS Pro")
+            arcpy.AddError(f"Selected projection {sel_crs[0][3]} is not avaible in ArcGIS Pro")
         # Create output geometry
         arcpy.management.ProjectRaster(in_file, out_file, spat_ref)
 
